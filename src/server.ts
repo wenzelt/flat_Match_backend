@@ -1,8 +1,12 @@
 import dotenv from "dotenv"
 import express from "express"
 import mongoose from "mongoose"
-
 import { createServer } from 'http'
+// import swagger
+// tslint:disable-next-line:no-var-requires
+const swaggerUI = require('swagger-ui-express')
+// tslint:disable-next-line:no-var-requires
+const swaggerFile = require('./swagger_output.json')
 
 // import index route
 import { indexRoute } from "./routes/indexRoute"
@@ -15,7 +19,6 @@ dotenv.config()
 const port = process.env.SERVER_PORT
 
 const app = express()
-
 
 const { DB_USER, DB_PASS } = process.env
 
@@ -45,7 +48,7 @@ app.use(express.json())
 
 // use the routes
 app.use('/', indexRoute)
-app.use('/api', indexRoute)
+app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 const httpServer = createServer(app)
 
@@ -54,4 +57,6 @@ httpServer.listen(
 	(): void => {
 		// tslint:disable-next-line:no-console
 		console.log(`\n🚀 	Server started at http://localhost:${port}`)
+		// tslint:disable-next-line:no-console
+		console.log(`\n🚀 	Swagger api started at http://localhost:${port}/doc`)
 	})
