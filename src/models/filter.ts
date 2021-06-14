@@ -1,33 +1,33 @@
 import mongoose, { Schema } from "mongoose"
 
 const filterSchema = new mongoose.Schema({
-    applicant: {
+	applicant: {
 		type: Schema.Types.ObjectId,
 		ref: "Applicant",
 		required: true,
 		unique: true
 	},
 	priceRange: {
-        currency: {
-            type: String,
-            required: true
-        },
+		currency: {
+			type: String,
+			required: true
+		},
 		minPrice: Number,
-        maxPrice: Number,
+		maxPrice: Number,
 	},
-    ageRange: {
-        minAge: {
-            type: Number,
-            min: 0,
-            max: 120
-        },
-        maxAge: {
-            type: Number,
-            min: 0,
-            max: 120
-        }
-    },
-    location: {
+	ageRange: {
+		minAge: {
+			type: Number,
+			min: 0,
+			max: 120
+		},
+		maxAge: {
+			type: Number,
+			min: 0,
+			max: 120
+		}
+	},
+	location: {
 		country: {
 			type: String,
 			required: true
@@ -41,38 +41,38 @@ const filterSchema = new mongoose.Schema({
 			required: true
 		},
 		address: String,
-        distance: Number
+		distance: Number
 	},
 	roomMatesNumber: {
-        type: Number,
-        min: 0,
-        max: 20
-    },
-    furnished: Boolean,
-    minYearConstructed: Date
+		type: Number,
+		min: 0,
+		max: 20
+	},
+	furnished: Boolean,
+	minYearConstructed: Date
 })
 
 export interface IFilter {
-    applicant: string
-    priceRange?: {
-        currency: string
-        minPrice?: number
-        maxPrice?: number
-    }
-    ageRange?: {
-        minAge?: number
-        maxAge?: number
-    }
-    location?: {
+	applicant: string
+	priceRange?: {
+		currency: string
+		minPrice?: number
+		maxPrice?: number
+	}
+	ageRange?: {
+		minAge?: number
+		maxAge?: number
+	}
+	location?: {
 		country: string
 		city: string
 		zipCode: string
 		address?: string
-        distance?: number
+		distance?: number
 	}
-    roomMatesNumber?: number
-    furnished?: Boolean
-    minYearConstructed?: Date
+	roomMatesNumber?: number
+	furnished?: boolean
+	minYearConstructed?: Date
 }
 
 export interface FilterDoc extends IFilter, mongoose.Document {
