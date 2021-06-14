@@ -7,6 +7,9 @@
 # dotenv environment variables file
 .env
 
+# swagger documentation
+swagger_output.json
+
 # Distribution directories
 dist/*
 
