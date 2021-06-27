@@ -8,8 +8,9 @@ const swaggerUI = require('swagger-ui-express')
 // tslint:disable-next-line:no-var-requires
 const swaggerFile = require('./swagger_output.json')
 
-// import index route
+// import routes
 import { indexRoute } from "./routes/indexRoute"
+import { authRoute } from "./routes/authRoute"
 
 // initialize configuration
 dotenv.config()
@@ -48,6 +49,8 @@ app.use(express.json())
 
 // use the routes
 app.use('/', indexRoute)
+app.use('/api', indexRoute)
+app.use('/api/auth', authRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 const httpServer = createServer(app)
