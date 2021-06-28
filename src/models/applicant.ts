@@ -22,7 +22,8 @@ const applicantSchema = new mongoose.Schema({
 export interface IApplicant {
 	email: string
 	password: any
-	full_name: string
+	first_name: string
+	last_name: string
 	gender: string
 	image: [Schema.Types.ObjectId]
 	bio: string

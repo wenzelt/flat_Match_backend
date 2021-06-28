@@ -18,7 +18,8 @@ const tennantSchema: Schema = new mongoose.Schema({
 export interface ITennant {
 	email: string
 	password: any
-	full_name: string
+	first_name: string
+	last_name: string
 	gender: string
 	image: [Schema.Types.ObjectId]
 	bio: string

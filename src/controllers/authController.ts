@@ -20,7 +20,8 @@ const signup = async (req: any, res: any) => {
 			const applicant = new Applicant({
 				email: req.body.email,
 				password: hashedPassword1,
-				full_name: req.body.full_name,
+				first_name: req.body.first_name,
+				last_name: req.body.last_name,
 				gender: req.body.gender,
 				image: req.body.image,
 				bio: req.body.bio,
@@ -60,7 +61,8 @@ const signup = async (req: any, res: any) => {
 			const tennant = new Tennant({
 				email: req.body.email,
 				password: hashedPassword2,
-				full_name: req.body.full_name,
+				first_name: req.body.first_name,
+				last_name: req.body.last_name,
 				gender: req.body.gender,
 				image: req.body.image,
 				bio: req.body.bio,
@@ -140,7 +142,7 @@ const signin = async (req: any, res: any) => {
 		// if user is found and password is valid
 		// create a token
 		const token = jwt.sign(
-			{ _id: user._id, full_name: user.full_name },
+			{ _id: user._id, first_name: user.first_name, last_name: user.last_name },
 			process.env.JWT_SECRET,
 			{
 				expiresIn: 86400, // expires in 24 hours

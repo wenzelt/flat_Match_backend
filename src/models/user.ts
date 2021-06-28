@@ -25,7 +25,11 @@ const userSchema = new mongoose.Schema({
 		minlength: 8,
 		// select: false,  // never send Pw to the frontend
 	},
-	full_name: {
+	first_name: {
+		type: String,
+		required: true,
+	},
+	last_name: {
 		type: String,
 		required: true,
 	},
@@ -42,32 +46,26 @@ const userSchema = new mongoose.Schema({
 		validate: [arrayLimit, '{PATH} exceeds the limit of 20']
 	},
 	bio: {
-		type: String,
-		required: true,
+		type: String
 	},
 	date_of_birth: {
 		type: Date,
 		required: true,
-
 	},
 	occupation: {
 		type: String,
 	},
 	place_of_residency: {
 		country: {
-			type: String,
-			required: true
+			type: String
 		},
 		city: {
-			type: String,
-			required: true
+			type: String
 		},
 		zipCode: {
-			type: String,
-			required: true
+			type: String
 		},
 		address: String,
-
 	},
 	interests: [{
 		type: String,
