@@ -129,8 +129,6 @@ const signin = async (req: any, res: any) => {
 		user = await User.findOne({
 			email: req.body.email,
 		}).exec()
-		// tslint:disable-next-line:no-console
-		console.log(user)
 
 		// check if the password is valid
 		const isPasswordValid = bcrypt.compareSync(
