@@ -26,14 +26,14 @@ export interface IApplicant {
 	last_name: string
 	gender: string
 	image: [Schema.Types.ObjectId]
-	bio: string
+	bio?: string
 	date_of_birth: Date
-	occupation: string
-	place_of_residency: {
-		country: string
-		city: string
-		zipCode: string
-		address: string
+	occupation?: string
+	place_of_residency?: {
+		country?: string
+		city?: string
+		zipCode?: string
+		address?: string
 	}
 	interests: [string]
 	smoker: boolean
