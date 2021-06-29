@@ -11,6 +11,7 @@ const swaggerFile = require('./swagger_output.json')
 // import routes
 import { indexRoute } from "./routes/indexRoute"
 import { authRoute } from "./routes/authRoute"
+import { allowCrossDomain } from "./middleware/crossDomainMiddleware"
 
 // initialize configuration
 dotenv.config()
@@ -46,10 +47,10 @@ mongoose.set('useFindAndModify', false)
 // Add the body parsers middleware
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(allowCrossDomain)
 
 // use the routes
 app.use('/', indexRoute)
-app.use('/api', indexRoute)
 app.use('/api/auth', authRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 

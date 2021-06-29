@@ -130,6 +130,11 @@ const signin = async (req: any, res: any) => {
 			email: req.body.email,
 		}).exec()
 
+		// check if a user with the given email exists
+		if (user === null || user === undefined) {
+			return res.status(401).send({ token: null })
+		}
+
 		// check if the password is valid
 		const isPasswordValid = bcrypt.compareSync(
 			req.body.password,
