@@ -163,7 +163,7 @@ const signin = async (req: any, res: any) => {
 	}
 }
 
-const userinfo = async (req: any, res: any) => {
+const getUser = async (req: any, res: any) => {
 	try {
 		// get own user name from database
 		const user = await User.findById(req.userId)
@@ -185,9 +185,51 @@ const userinfo = async (req: any, res: any) => {
 	}
 }
 
+const updateUser = async (req: any, res: any) => {
+	try {
+		const filter = { _id: req.userId }
+		const update = {
+			first_name: req.body.first_name,
+			last_name: req.body.last_name,
+			gender: req.body.gender,
+			image: req.body.image,
+			bio: req.body.bio,
+			date_of_birth: req.body.date_of_birth,
+			occupation: req.body.occupation,
+			place_of_residency: req.body.place_of_residency,
+			interests: req.body.interests,
+			smoker: req.body.smoker,
+		}
+
+		const updatedUser = await User.findOneAndUpdate(filter, update, {
+			runValidators: true,
+			new: true
+		})
+
+		if (!updatedUser)
+			return res.status(404).json({
+				error: "Not Found",
+				message: `User not found`,
+			})
+
+		return res.status(200).json(updatedUser)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+}
+
 const logout = (req: any, res: any) => {
 	res.status(200).send({ token: null })
 }
 
 
-export { signup, signin, userinfo, logout }
+export {
+	signup,
+	signin,
+	getUser,
+	logout,
+	updateUser
+}
