@@ -2,7 +2,7 @@ import { Schema } from "mongoose"
 import * as mongoose from "mongoose"
 import { User, userType } from "./user"
 
-const tennantSchema: Schema = new mongoose.Schema({
+const tenantSchema: Schema = new mongoose.Schema({
 	declined_applicants: [{
 		type: Schema.Types.ObjectId,
 		ref: "Applicant",
@@ -15,7 +15,7 @@ const tennantSchema: Schema = new mongoose.Schema({
 	}],
 }, userType)
 
-export interface ITennant {
+export interface ITenant {
 	email: string
 	password: any
 	first_name: string
@@ -37,19 +37,19 @@ export interface ITennant {
 	userType: string
 }
 
-export interface TennantDoc extends ITennant, mongoose.Document {
+export interface TenantDoc extends ITenant, mongoose.Document {
 	id: number
 	_doc: any
 }
 
-interface TennantModelInterface extends mongoose.Model<TennantDoc> {
-	build(attr: ITennant): any
+interface TenantModelInterface extends mongoose.Model<TenantDoc> {
+	build(attr: ITenant): any
 }
 
 
-tennantSchema.statics.build = (attr: ITennant) => {
-	return new Tennant(attr)
+tenantSchema.statics.build = (attr: ITenant) => {
+	return new Tenant(attr)
 }
 
-const Tennant = User.discriminator<TennantDoc, TennantModelInterface>("Tennant", tennantSchema)
-export { Tennant }
+const Tenant = User.discriminator<TenantDoc, TenantModelInterface>("Tenant", tenantSchema)
+export { Tenant }
