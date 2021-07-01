@@ -163,7 +163,7 @@ const signin = async (req: any, res: any) => {
 	}
 }
 
-const userinfo = async (req: any, res: any) => {
+const getUser = async (req: any, res: any) => {
 	try {
 		// get own user name from database
 		const user = await User.findById(req.userId)
@@ -229,7 +229,7 @@ const logout = (req: any, res: any) => {
 export {
 	signup,
 	signin,
-	userinfo,
+	getUser,
 	logout,
 	updateUser
 }

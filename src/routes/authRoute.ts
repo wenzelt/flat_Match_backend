@@ -9,7 +9,7 @@ export const authRoute = express.Router()
 
 authRoute.post('/signin', authController.signin)
 authRoute.post("/signup", authController.signup)
-authRoute.get("/userinfo", middlewares.checkAuthentication, authController.userinfo)
+authRoute.get("/user", middlewares.checkAuthentication, authController.getUser)
 authRoute.get("/logout", middlewares.checkAuthentication, authController.logout)
 authRoute.put("/user", middlewares.checkAuthentication, authController.updateUser)
 
