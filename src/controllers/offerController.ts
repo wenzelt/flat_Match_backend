@@ -32,7 +32,7 @@ const getOffer = async (req: any, res: any) => {
 		if (!housingOffer)
 			return res.status(404).json({
 				error: "Not Found",
-				message: `Movie not found`,
+				message: `Housing Offer not found`,
 			})
 
 		// return gotten movie
@@ -84,7 +84,7 @@ const removeOffer = async (req: any, res: any) => {
 		// return message that movie was deleted
 		return res
 			.status(200)
-			.json({ message: `Housingoffer with id${req.params.id} was deleted` })
+			.json({ message: `Housingoffer with id:${req.params.id} was deleted` })
 	} catch (err) {
 		return res.status(500).json({
 			error: "Internal server error",
@@ -93,4 +93,4 @@ const removeOffer = async (req: any, res: any) => {
 	}
 }
 
-export { createOffer, getOffer, updateOffer,removeOffer}
+export { createOffer, getOffer, updateOffer, removeOffer }

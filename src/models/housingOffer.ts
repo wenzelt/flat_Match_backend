@@ -117,7 +117,7 @@ export interface IHousingOffer {
 		minAge: number
 		maxAge: number
 	}
-	moveInDate: number
+	moveInDate: Date
 	furnished: boolean
 	numberOfRooms: number
 	values: [string]

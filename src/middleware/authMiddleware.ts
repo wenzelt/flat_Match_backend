@@ -1,8 +1,8 @@
 // @ts-ignore
 import jwt = require("jsonwebtoken")
-import User = require("../models/user")
+import { User } from "../models/user"
 import Applicant = require("../models/applicant")
-import Tennant = require("../models/tenant")
+import Tenant = require("../models/tenant")
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -36,5 +36,22 @@ const checkAuthentication = (req: any, res: any, next: any) => {
 	})
 }
 
-export { checkAuthentication }
+const checkIsTenant = async (req: any, res: any, next: any) => {
+	// checkAuthentication must be executed before this method
+	// if not req.userId is not defined
+	const user: any = await User.findById(req.userId)
+	if (user.userType === "Tenant") {
+		// if the user is an Tenant continue with the execution
+		next()
+	} else {
+		// if the user is no tenant return that the user has not the rights for this action
+		return res.status(403).send({
+			error: "Forbidden",
+			message: "You do not have the rights for this action.",
+		})
+	}
+}
+
+
+export { checkAuthentication, checkIsTenant }
 

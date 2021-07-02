@@ -53,7 +53,7 @@ app.use(allowCrossDomain)
 // use the routes
 app.use('/', indexRoute)
 app.use('/api/auth', authRoute)
-app.use('/api/offer', offerRoute)
+app.use('/api/offers', offerRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 const httpServer = createServer(app)
