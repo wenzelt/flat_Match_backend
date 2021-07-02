@@ -1,8 +1,6 @@
 // @ts-ignore
 import jwt = require("jsonwebtoken")
 import { User } from "../models/user"
-import Applicant = require("../models/applicant")
-import Tenant = require("../models/tenant")
 
 const JWT_SECRET = process.env.JWT_SECRET
 
