@@ -2,8 +2,6 @@
 import jwt = require("jsonwebtoken")
 import { User } from "../models/user"
 
-const JWT_SECRET = process.env.JWT_SECRET
-
 const checkAuthentication = (req: any, res: any, next: any) => {
 	// check header or url parameters or post parameters for token
 	let token = ""
