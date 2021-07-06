@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import dotenv from "dotenv"
-import { User, userType } from "../models/user"
+import { User } from "../models/user"
 import { Applicant } from "../models/applicant"
-import { Tennant } from "../models/tennant"
+import { Tenant } from "../models/tenant"
 
 const signup = async (req: any, res: any) => {
-	// check if applicant or tennant
+	// check if applicant or tenant
 	try {
 		if (process.env.JWT_SECRET === '' || process.env.JWT_SECRET === undefined ||
 			process.env.JWT_SECRET === null) throw new Error("JWT Secret not found")
@@ -58,7 +58,7 @@ const signup = async (req: any, res: any) => {
 			// hash the password before storing it in the database
 			const hashedPassword2 = bcrypt.hashSync(req.body.password, 12)
 
-			const tennant = new Tennant({
+			const tenant = new Tenant({
 				email: req.body.email,
 				password: hashedPassword2,
 				first_name: req.body.first_name,
@@ -74,10 +74,10 @@ const signup = async (req: any, res: any) => {
 				accepted_applicants: req.body.accepted_applicants,
 				userType: req.body.userType.discriminatorKey
 			})
-			// create the tennant in the database
-			const retUser = await User.create(tennant)
+			// create the tenant in the database
+			const retUser = await User.create(tenant)
 
-			// if tennant is registered without errors
+			// if tenant is registered without errors
 			// create a token
 			const token = jwt.sign(
 				{
