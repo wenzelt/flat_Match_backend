@@ -37,3 +37,9 @@ npm run build
 # run the server
 npm run start
 ```
+
+**DB Access**
+How to access DB with 3rd party tools
+# Use the credentials and your tool of choice to connect to mongoDB through GUI tools
+
+```mongodb+srv://${DB_USER}:${DB_PASS}@flatmatch-frankfurt.mhfhi.mongodb.net/FlatMatch?retryWrites=true&w=majority```
