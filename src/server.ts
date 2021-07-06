@@ -11,6 +11,7 @@ const swaggerFile = require('./swagger_output.json')
 // import routes
 import { indexRoute } from "./routes/indexRoute"
 import { authRoute } from "./routes/authRoute"
+import { offerRoute } from "./routes/offerRoute"
 import { allowCrossDomain } from "./middleware/crossDomainMiddleware"
 
 // initialize configuration
@@ -52,6 +53,7 @@ app.use(allowCrossDomain)
 // use the routes
 app.use('/', indexRoute)
 app.use('/api/auth', authRoute)
+app.use('/api/offers', offerRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 const httpServer = createServer(app)
