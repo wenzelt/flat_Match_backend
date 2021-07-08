@@ -107,7 +107,7 @@ export interface IHousingOffer {
 		country: string
 		city: string
 		zipCode: string
-		address: string
+		address?: string
 	}
 	description: string
 	roomSize: number
