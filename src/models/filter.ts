@@ -32,14 +32,8 @@ const filterSchema = new mongoose.Schema({
 			type: String,
 			required: true
 		},
-		city: {
-			type: String,
-			required: true
-		},
-		zipCode: {
-			type: String,
-			required: true
-		},
+		city: String,
+		zipCode: String,
 		address: String,
 		distance: Number
 	},
@@ -65,8 +59,8 @@ export interface IFilter {
 	}
 	location?: {
 		country: string
-		city: string
-		zipCode: string
+		city?: string
+		zipCode?: string
 		address?: string
 		distance?: number
 	}

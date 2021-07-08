@@ -48,6 +48,22 @@ const checkIsTenant = async (req: any, res: any, next: any) => {
 	}
 }
 
+const checkIsApplicant = async (req: any, res: any, next: any) => {
+	// checkAuthentication must be executed before this method
+	// if not req.userId is not defined
+	const user: any = await User.findById(req.userId)
+	if (user.userType === "Applicant") {
+		// if the user is an applicant continue with the execution
+		next()
+	} else {
+		// if the user is no applicant return that the user has not the rights for this action
+		return res.status(403).send({
+			error: "Forbidden",
+			message: "You do not have the rights for this action.",
+		})
+	}
+}
 
-export { checkAuthentication, checkIsTenant }
+
+export { checkAuthentication, checkIsTenant, checkIsApplicant }
 
