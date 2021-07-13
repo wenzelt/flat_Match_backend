@@ -1,4 +1,5 @@
 import { HousingOffer } from "../models/housingOffer"
+import { User } from "../models/user"
 
 const createOffer = async (req: any, res: any) => {
 	// check if the body of the request contains all necessary properties
@@ -7,7 +8,6 @@ const createOffer = async (req: any, res: any) => {
 			error: "Bad Request",
 			message: "The request body is empty",
 		})
-
 	// handle the request
 	try {
 		// create movie in database
