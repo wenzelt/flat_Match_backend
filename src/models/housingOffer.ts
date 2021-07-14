@@ -100,7 +100,7 @@ function arrayLimit(val: any) {
 
 
 export interface IHousingOffer {
-	tenants: string
+	tenant: string
 	flatmates: [string]
 	price: {
 		currency: string
