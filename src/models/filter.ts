@@ -38,9 +38,16 @@ const filterSchema = new mongoose.Schema({
 		distance: Number
 	},
 	roomMatesNumber: {
-		type: Number,
-		min: 0,
-		max: 20
+		minNumber: {
+			type: Number,
+			min: 0,
+			max: 20
+		},
+		maxNumber: {
+			type: Number,
+			min: 0,
+			max: 20
+		}
 	},
 	furnished: Boolean,
 	minYearConstructed: Date
@@ -64,7 +71,10 @@ export interface IFilter {
 		address?: string
 		distance?: number
 	}
-	roomMatesNumber?: number
+	roomMatesNumber?: {
+		minNumber?: number
+		maxNumber?: number
+	}
 	furnished?: boolean
 	minYearConstructed?: Date
 }
