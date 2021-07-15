@@ -1,11 +1,14 @@
 import mongoose, { Schema } from "mongoose"
 
 const housingOfferSchema = new mongoose.Schema({
-	tenants: [{
+	tenant: {
 		type: Schema.Types.ObjectId,
 		ref: "Tenant",
 		required: true,
-		unique: true
+	},
+	flatmates: [{
+		type: Schema.Types.ObjectId,
+		ref: "Tenant",
 	}],
 	price: {
 		currency: {
@@ -97,7 +100,8 @@ function arrayLimit(val: any) {
 
 
 export interface IHousingOffer {
-	tenants: string
+	tenant: string
+	flatmates: [string]
 	price: {
 		currency: string
 		amount: number
@@ -107,7 +111,7 @@ export interface IHousingOffer {
 		country: string
 		city: string
 		zipCode: string
-		address: string
+		address?: string
 	}
 	description: string
 	roomSize: number

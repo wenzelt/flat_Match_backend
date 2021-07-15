@@ -32,21 +32,22 @@ const filterSchema = new mongoose.Schema({
 			type: String,
 			required: true
 		},
-		city: {
-			type: String,
-			required: true
-		},
-		zipCode: {
-			type: String,
-			required: true
-		},
+		city: String,
+		zipCode: String,
 		address: String,
 		distance: Number
 	},
 	roomMatesNumber: {
-		type: Number,
-		min: 0,
-		max: 20
+		minNumber: {
+			type: Number,
+			min: 0,
+			max: 20
+		},
+		maxNumber: {
+			type: Number,
+			min: 0,
+			max: 20
+		}
 	},
 	furnished: Boolean,
 	minYearConstructed: Date
@@ -65,12 +66,15 @@ export interface IFilter {
 	}
 	location?: {
 		country: string
-		city: string
-		zipCode: string
+		city?: string
+		zipCode?: string
 		address?: string
 		distance?: number
 	}
-	roomMatesNumber?: number
+	roomMatesNumber?: {
+		minNumber?: number
+		maxNumber?: number
+	}
 	furnished?: boolean
 	minYearConstructed?: Date
 }
