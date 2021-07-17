@@ -56,14 +56,14 @@ const getFilteredOffer = async (req: any, res: any) => {
                 message: `Housing Offer not found`,
             })
 
-		// return gotten offerings
-		return res.status(200).json(housingOffersAfterFilter)
-	} catch (err) {
-		return res.status(500).json({
-			error: "Internal Server Error",
-			message: err.message,
-		})
-	}
+        // return gotten offerings
+        return res.status(200).json(housingOffersAfterFilter)
+    } catch (err) {
+        return res.status(500).json({
+            error: "Internal Server Error",
+            message: err.message,
+        })
+    }
 }
 
 
