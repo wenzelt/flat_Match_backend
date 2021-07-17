@@ -36,14 +36,16 @@ function jsonFilterToMongoFilter(filterOfUser: any) {
 }
 
 const getFilteredOffer = async (req: any, res: any) => {
-	try {
-		const filter = { applicant: req.userId }
-		const filterOfUser = await Filter.findOne(filter)
-		if (!filterOfUser)
-			return res.status(404).json({
-				error: "Not Found",
-				message: `No Filter set for this user, please set one to narrow down the offerings.`,
-			})
+
+
+    try {
+        const filter = {applicant: req.userId}
+        const filterOfUser = await Filter.findOne(filter)
+        if (!filterOfUser)
+            return res.status(404).json({
+                error: "Not Found",
+                message: `No Filter set for this user, please set one to narrow down the offerings.`,
+            })
 
 		const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
 		const housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON)
