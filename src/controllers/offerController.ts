@@ -47,14 +47,14 @@ const getFilteredOffer = async (req: any, res: any) => {
                 message: `No Filter set for this user, please set one to narrow down the offerings.`,
             })
 
-		const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
-		const housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON)
-		// if no offer with id is found, return 404
-		if (!housingOffersAfterFilter)
-			return res.status(404).json({
-				error: "Not Found",
-				message: `Housing Offer not found`,
-			})
+        const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
+        const housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON)
+        // if no offer with id is found, return 404
+        if (!housingOffersAfterFilter)
+            return res.status(404).json({
+                error: "Not Found",
+                message: `Housing Offer not found`,
+            })
 
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
