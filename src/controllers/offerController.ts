@@ -1,6 +1,6 @@
-import { HousingOffer } from "../models/housingOffer"
-import { User } from "../models/user"
-import { Filter, FilterDoc } from "../models/filter"
+import {HousingOffer} from "../models/housingOffer"
+import {User} from "../models/user"
+import {Filter, FilterDoc} from "../models/filter"
 
 
 function jsonFilterToMongoFilter(jsonFilter: FilterDoc) {
