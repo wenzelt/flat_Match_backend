@@ -3,20 +3,36 @@ import {User} from "../models/user"
 import {Filter, FilterDoc} from "../models/filter"
 
 
-function jsonFilterToMongoFilter(jsonFilter: FilterDoc) {
-	const filteredJson = jsonFilter.toJSON()
-	return {
-		__name__: "JsonFilter",
-		"price.amount": { $gt: filteredJson.priceRange.minPrice, $lt: filteredJson.priceRange.minPrice },
-		"price.currency": "EUR",
-		"ageRange.maxAge": { $lt: filteredJson.ageRange.maxAge },
-		"ageRange.minAge": { $gt: filteredJson.ageRange.minAge },
-		"$expr": {
-			$and: [
-				{ "$gt": [{ "$strLenCP": "flatmates" }, filteredJson.roomMatesNumber.minNumber] },
-				{ "$lt": [{ "$strLenCP": "flatmates" }, filteredJson.roomMatesNumber.maxNumber] }]
-		}
-	}
+function jsonFilterToMongoFilter(filterOfUser: any) {
+    const JSONfilter = filterOfUser.toJSON()
+    const filterString = JSON.stringify(JSONfilter)
+
+    const query: any = {}
+
+    // filter User Side
+    if (filterString.includes("priceRange")) {
+        query["price.amount"] = {$gte: JSONfilter.priceRange.minPrice, $lt: JSONfilter.priceRange.maxPrice}
+    }
+    if (filterString.includes("ageRange")) {
+        query["ageRange.maxAge"] = {$lte: JSONfilter.ageRange.maxAge}
+    }
+    if (filterString.includes("ageRange")) {
+        query["ageRange.minAge"] = {$gte: JSONfilter.ageRange.minAge}
+    }
+    if (filterString.includes("roomMatesNumber")) {
+        query.$expr = {
+            $and: [
+                {"$gte": [{"$strLenCP": "flatmates"}, JSONfilter.roomMatesNumber.minNumber]},
+                {"$lte": [{"$strLenCP": "flatmates"}, JSONfilter.roomMatesNumber.maxNumber]}]
+        }
+    }
+    if (filterString.includes("furnished")) {
+        query.furnished = JSONfilter.furnished
+    }
+    if (filterString.includes("minYearConstructed")) {
+        query.yearConstructed = {$gt: new Date(JSONfilter.minYearConstructed.getFullYear())}
+    }
+    return query
 }
 
 const getFilteredOffer = async (req: any, res: any) => {
