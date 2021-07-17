@@ -53,7 +53,7 @@ const housingOfferSchema = new mongoose.Schema({
 		required: true
 	},
 	yearConstructed: {
-		type: Number,
+		type: Date,
 		required: false
 	},
 	title: {
@@ -115,7 +115,7 @@ export interface IHousingOffer {
 	}
 	description: string
 	roomSize: number
-	yearConstructed?: number
+	yearConstructed?: Date
 	title: string
 	ageRange?: {
 		minAge?: number
