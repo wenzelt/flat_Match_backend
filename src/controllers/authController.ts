@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import dotenv from "dotenv"
 import { User } from "../models/user"
 import { Applicant } from "../models/applicant"
-import { Tenant } from "../models/tenant"
+import { Tenant, TenantDoc } from "../models/tenant"
 
 const signup = async (req: any, res: any) => {
 	// check if applicant or tenant
@@ -75,13 +75,13 @@ const signup = async (req: any, res: any) => {
 				userType: req.body.userType.discriminatorKey
 			})
 			// create the tenant in the database
-			const retUser = await User.create(tenant)
+			const retUser: any = await User.create(tenant)
 
 			// if tenant is registered without errors
 			// create a token
 			const token = jwt.sign(
 				{
-					_id: retUser._id
+					_id: retUser._id, first_name: retUser.first_name, last_name: retUser.last_name
 				},
 				process.env.JWT_SECRET,
 				{
