@@ -90,7 +90,7 @@ const housingOfferSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	}],
-
+	smoking: Boolean,
 })
 
 // Limit number of pictures to 20
@@ -125,6 +125,7 @@ export interface IHousingOffer {
 	furnished: boolean
 	numberOfRooms?: number
 	values: [string]
+	smoking: boolean
 }
 
 export interface HousingOfferDoc extends IHousingOffer, mongoose.Document {
