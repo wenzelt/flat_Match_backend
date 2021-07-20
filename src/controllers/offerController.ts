@@ -294,6 +294,7 @@ export {
 	getOffers,
 	updateOffer,
 	removeOffer,
+	getFilteredOffer,
 	// offer pictures
 	getOfferPicturesMetaData,
 	getOfferPicture,
