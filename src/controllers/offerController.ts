@@ -90,11 +90,7 @@ function jsonFilterToMongoFilter(filterOfUser: any) {
 	return mongoQuery
 }
 
-async function getFilterGeo(filter: any) {
-	// filter.location = {}
-	// filter.location.country = "Munich"
-	// filter.location.city = "Munich"
-	// filter.location.address = "Situlistr 67"
+async function getFilterGeo(filter) {
 	try {
 		const queryFilter = `${filter.location.country},${filter.location.city},${filter.location.address}`
 		const response = await axios.get(`http://api.positionstack.com/v1/forward?access_key=f5d1f0164715adf90867d700bc6c8555&query=${queryFilter}&limit=10`)
