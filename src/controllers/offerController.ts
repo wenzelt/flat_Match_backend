@@ -129,9 +129,19 @@ async function getOfferGeo(housingOffersAfterFilter: any) {
 	return returnArray
 }
 
+function calculateAge(birthday) { // birthday is a date
+	const ageDifMs = Date.now() - birthday.getTime()
+	const ageDate = new Date(ageDifMs) // miliseconds from epoch
+	return Math.abs(ageDate.getUTCFullYear() - 1970)
+}
+
+
 const getFilteredOffer = async (req: any, res: any) => {
 	try {
 		const filter = { applicant: req.userId }
+		const user = await User.findById(req.userId).lean()
+		// @ts-ignore
+		const userAge = calculateAge(user.date_of_birth)
 		const filterOfUser = await Filter.findOne(filter)
 		if (!filterOfUser)
 			return res.status(404).json({
@@ -150,12 +160,23 @@ const getFilteredOffer = async (req: any, res: any) => {
 			})
 		housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, originalFilter)
 
+		if (userAge) {
+			const returnArray = []
+			for (const offer of housingOffersAfterFilter) {
+				// @ts-ignore
+				if (userAge <= offer.ageRange.maxNumber && userAge > offer.ageRange.minNumber) {
+					returnArray.push(offer)
+				}
+			}
+			housingOffersAfterFilter = returnArray
+		}
 		// if filter has location do this
 		if (filterOfUser.toJSON().hasOwnProperty("location")) {
 			const filterGEO = await getFilterGeo(originalFilter)
 			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
 			housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
 		}
+
 
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
