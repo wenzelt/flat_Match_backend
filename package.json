@@ -27,6 +27,7 @@
   "author": "Manuel Klettner",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
@@ -36,9 +37,10 @@
     "mongoose": "^5.12.9",
     "mongoose-unique-validator": "^2.0.3",
     "ncp": "^2.0.0",
+    "request": "^2.81.0",
+    "swagger-ui-express": "^4.1.6",
     "typescript-formatter": "^7.2.2",
-    "validator": "^13.6.0",
-    "swagger-ui-express": "^4.1.6"
+    "validator": "^13.6.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -46,9 +48,9 @@
     "@types/fs-extra": "^9.0.11",
     "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^15.0.3",
-    "@types/validator": "^13.1.4",
     "@types/shelljs": "^0.8.8",
     "@types/swagger-ui-express": "^4.1.2",
+    "@types/validator": "^13.1.4",
     "fs-extra": "^10.0.0",
     "nodemon": "^2.0.7",
     "npm-run-all": "^4.1.5",

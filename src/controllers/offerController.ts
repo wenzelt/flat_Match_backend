@@ -1,31 +1,101 @@
 import { HousingOffer } from "../models/housingOffer"
 import { User } from "../models/user"
-import { Filter, FilterDoc } from "../models/filter"
+import { Filter } from "../models/filter"
+import axios from "axios"
 
+
+function filterAmountOfFlatmates(offers: any, filter: any) {
+	const returnArray: any[] = []
+	if (filter.hasOwnProperty("roomMatesNumber")) {
+		for (const i of offers) {
+			const numberFlatMates = i.flatmates.length
+			if (numberFlatMates >= filter.roomMatesNumber.minNumber && numberFlatMates <= filter.roomMatesNumber.maxNumber) {
+				returnArray.push(i)
+			}
+		}
+	} else {
+		return offers
+	}
+	return returnArray
+
+}
+//
+// function calcDistance() {
+//
+// }
+
+// function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
+//     const returnArray: any = []
+//     let distanceResult : number = 10
+//     for (const offer of offerGeo) {
+//         calcDistance({"lat1": offer.location.latitude, "lat2" : filterGeo.lat, "long1":offer.location.longitude, "long2": filterGeo.long})
+//         if (distanceResult < maxDistance) {
+//             returnArray.push(offer)
+//         }
+//
+//     }
+//     return returnArray
+// }
 
 function jsonFilterToMongoFilter(filterOfUser: any) {
 	const JSONfilter = filterOfUser.toJSON()
 	const filterString = JSON.stringify(JSONfilter)
 
-	const query: any = {}
+	const mongoQuery: any = {}
 
 	// filter User Side
 	if (filterString.includes("priceRange")) {
-		query["price.amount"] = { $gte: JSONfilter.priceRange.minPrice, $lt: JSONfilter.priceRange.maxPrice }
+		mongoQuery["price.amount"] = { $gte: JSONfilter.priceRange.minPrice, $lt: JSONfilter.priceRange.maxPrice }
 	}
 	if (filterString.includes("ageRange")) {
-		query["ageRange.maxAge"] = { $lte: JSONfilter.ageRange.maxAge }
+		mongoQuery["ageRange.maxAge"] = { $lte: JSONfilter.ageRange.maxAge }
 	}
 	if (filterString.includes("ageRange")) {
-		query["ageRange.minAge"] = { $gte: JSONfilter.ageRange.minAge }
+		mongoQuery["ageRange.minAge"] = { $gte: JSONfilter.ageRange.minAge }
 	}
 	if (filterString.includes("furnished")) {
-		query.furnished = JSONfilter.furnished
+		mongoQuery.furnished = JSONfilter.furnished
 	}
 	if (filterString.includes("minYearConstructed")) {
-		query.yearConstructed = { $gt: new Date(JSONfilter.minYearConstructed).toISOString() }
+		mongoQuery.yearConstructed = { $gt: new Date(JSONfilter.minYearConstructed).toISOString() }
 	}
-	return query
+
+	return mongoQuery
+}
+
+async function getFilterGeo(filter: any) {
+	// filter.location = {}
+	// filter.location.country = "Munich"
+	// filter.location.city = "Munich"
+	// filter.location.address = "Situlistr 67"
+	try {
+		const queryFilter = `${filter.location.country},${filter.location.city},${filter.location.address}`
+		const response = await axios.get(`http://api.positionstack.com/v1/forward?access_key=f5d1f0164715adf90867d700bc6c8555&query=${queryFilter}&limit=10`)
+		return { "lat": response.data.data[0].latitude, "long": response.data.data[0].longitude }
+	} catch (error) {
+		// console.error(error);
+		return error
+	}
+}
+
+async function getOfferGeo(housingOffersAfterFilter: any) {
+	const returnArray = []
+	for (const offer of housingOffersAfterFilter) {
+		try {
+			offer.location = {}
+			offer.location.country = "Munich"
+			offer.location.city = "Munich"
+			offer.location.address = "Situlistr 67"
+			const queryFilter = `${offer.location.country},${offer.location.city},${offer.location.address}`
+			const response = await axios.get(`http://api.positionstack.com/v1/forward?access_key=f5d1f0164715adf90867d700bc6c8555&query=${queryFilter}&limit=10`)
+			offer.location.latitude = response.data.data[0].latitude
+			offer.location.longitude = response.data.data[0].longitude
+			returnArray.push(offer)
+		} catch (error) {
+			return error
+		}
+	}
+	return returnArray
 }
 
 const getFilteredOffer = async (req: any, res: any) => {
@@ -39,14 +109,24 @@ const getFilteredOffer = async (req: any, res: any) => {
 			})
 
 		const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
-		const housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON)
+		let housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON).lean()
 		// if no offer with id is found, return 404
 		if (!housingOffersAfterFilter)
 			return res.status(404).json({
 				error: "Not Found",
 				message: `Housing Offer not found`,
 			})
+		housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, filterOfUser.toJSON())
 
+		// if filter has location do this
+		if (filterOfUser.toJSON().hasOwnProperty("location")) {
+			const originalFilter = filterOfUser.toJSON()
+			const queryFilter = originalFilter.location.country + "," + originalFilter.location.city + "," + originalFilter.location.address
+			const filterGEO = await getFilterGeo(originalFilter)
+			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
+			// housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
+		}
+		// housingOffersAfterFilter = filterDistance(housingOffersAfterFilter, mongoFilterFromJSON)
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
 	} catch (err) {
