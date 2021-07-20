@@ -38,14 +38,6 @@ const userSchema = new mongoose.Schema({
 		enum: ["Male", "Female", "Prefer not to say"],
 		required: true
 	},
-	image: {
-		type: [{
-			type: Schema.Types.ObjectId,
-			ref: "Image"
-		}],
-		required: true,
-		validate: [arrayLimit, '{PATH} exceeds the limit of 20']
-	},
 	bio: {
 		type: String
 	},

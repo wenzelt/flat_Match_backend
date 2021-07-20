@@ -21,7 +21,6 @@ export interface ITenant {
 	first_name: string
 	last_name: string
 	gender: string
-	image: [Schema.Types.ObjectId]
 	bio?: string
 	date_of_birth: Date
 	occupation?: string
