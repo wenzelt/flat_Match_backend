@@ -1,14 +1,26 @@
 {
     "compilerOptions": {
+		"experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "module": "commonjs",
         "esModuleInterop": true,
         "target": "es6",
-        "noImplicitAny": true,
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "types": [
+            "node",
+            "express"
+        ],
+        "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": true,
+        "declaration": true,
         "outDir": "dist",
         "newLine": "LF",
         "baseUrl": ".",
+        "resolveJsonModule": true,
         "paths": {
             "*": ["node_modules/*"]
         }

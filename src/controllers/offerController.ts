@@ -1,3 +1,10 @@
+import { Request as eRequest } from "express"
+import { GridFsStorage } from "multer-gridfs-storage"
+import mongoose from "mongoose"
+import multer from "multer"
+import { getFileByName, multerUploadPromise } from "../shared/gridFSHelperFuctions"
+import { dbUrl } from "../server"
+import { Logger } from "tslog"
 import { HousingOffer } from "../models/housingOffer"
 import { User } from "../models/user"
 import { Filter } from "../models/filter"
@@ -138,6 +145,8 @@ const getFilteredOffer = async (req: any, res: any) => {
 }
 
 
+const log = new Logger({ name: "Offer Controller" })
+
 const createOffer = async (req: any, res: any) => {
 	// check if the body of the request contains all necessary properties
 	if (Object.keys(req.body).length === 0)
@@ -257,4 +266,109 @@ const removeOffer = async (req: any, res: any) => {
 	}
 }
 
-export { createOffer, getOffer, getOffers, updateOffer, removeOffer, getFilteredOffer }
+const getOfferPicturesMetaData = async (req: any, res: any) => {
+	try {
+		const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+			bucketName: 'offerPictures'
+		})
+		const files = await gfs.find({ filename: { $regex: req.params.id + '.*' } }).toArray()
+		return res.status(200).json(files.map(file => ({
+			_id: file._id,
+			fileName: file.filename,
+			uploadDate: file.uploadDate
+		})))
+	} catch (error) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: error.message,
+		})
+	}
+}
+
+const getOfferPicture = async (req: any, res: any) => {
+	try {
+		const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+			bucketName: 'offerPictures'
+		})
+		const file = await getFileByName(gfs, req.params.fileName)
+		return res.status(200).json(file)
+	} catch (error) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: error.message,
+		})
+	}
+}
+
+const deleteOfferPicture = async (req: any, res: any) => {
+	try {
+		const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+			bucketName: 'offerPictures'
+		})
+		const file = await gfs.find({ filename: req.params.fileName }).toArray()
+		if (file.length > 0) {
+			await gfs.delete(file[0]._id)
+		}
+		return res.status(200).json(true)
+	} catch (error) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: error.message,
+		})
+	}
+}
+
+const uploadOfferPicture = async (req: any, res: any) => {
+	try {
+		await handleFile(req, req.params.id)
+	} catch (error: any) {
+		log.error(error)
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: error.message,
+		})
+	}
+	return res.status(200).json(true)
+}
+
+const imageFilter = (req: any, file: any, cb: any) => {
+	if (!file.originalname.match(/\.(JPG|jpg|jpeg|png)$/)) {
+		return cb(new Error('Only image files are allowed!'), false)
+	}
+	cb(null, true)
+}
+
+const handleFile = async (request: eRequest, offerId: string): Promise<any> => {
+	const storage = new GridFsStorage({
+		url: dbUrl,
+		options: {
+			useNewUrlParser: true,
+			useUnifiedTopology: true
+		},
+		file: (fileToUpload: any) => {
+			return {
+				filename: offerId + '_' + Date.now(),
+				bucketName: 'offerPictures',
+			}
+		}
+	})
+	// limit the upload to 1 file attached in multiline form of max 30MB
+	const upload = multer({ fileFilter: imageFilter, storage, limits: { fileSize: 30 * 1024 * 1024, files: 1 } })
+
+	const multerSingle = upload.single("image")
+	return multerUploadPromise(multerSingle, request)
+}
+
+export {
+	createOffer,
+	getOffer,
+	getOffers,
+	updateOffer,
+	removeOffer,
+	getFilteredOffer,
+	// offer pictures
+	getOfferPicturesMetaData,
+	getOfferPicture,
+	uploadOfferPicture,
+	deleteOfferPicture
+}
