@@ -127,7 +127,7 @@ const getOffer = async (req: any, res: any) => {
 const getOffers = async (req: any, res: any) => {
 	try {
 		// get offers of user._id from database
-		const housingOffers = await HousingOffer.find({ tenant: req.query.id }).exec()
+		const housingOffers = await HousingOffer.find({ tenant: req.params.userId }).exec()
 
 		// if no offers with user._id found, return 404
 		if (!housingOffers)
@@ -136,7 +136,7 @@ const getOffers = async (req: any, res: any) => {
 				message: `Housing Offer not found`,
 			})
 
-		// return gotten movie
+		// return gotten offer
 		return res.status(200).json(housingOffers)
 	} catch (err) {
 		return res.status(500).json({
