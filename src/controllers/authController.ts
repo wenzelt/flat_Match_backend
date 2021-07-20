@@ -163,8 +163,30 @@ const signin = async (req: any, res: any) => {
 
 const getUser = async (req: any, res: any) => {
 	try {
-		// get own user name from database
+		// get own user info from database
 		const user = await User.findById(req.userId)
+			.select('-password')
+			.exec()
+
+		if (!user)
+			return res.status(404).json({
+				error: "Not Found",
+				message: `User not found`,
+			})
+
+		return res.status(200).json(user)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: err.message,
+		})
+	}
+}
+
+const getUserByMail = async (req: any, res: any) => {
+	try {
+		// for an input array of emails, return an array of users
+		const user = await User.findOne({ email: req.params.email })
 			.select('-password')
 			.exec()
 
@@ -236,5 +258,6 @@ export {
 	signin,
 	getUser,
 	logout,
-	updateUser
+	updateUser,
+	getUserByMail
 }
