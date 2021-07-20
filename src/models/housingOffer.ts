@@ -17,15 +17,6 @@ const housingOfferSchema = new mongoose.Schema({
 		},
 		amount: Number,
 	},
-	images: {
-		type: [{
-			type: Schema.Types.ObjectId,
-			ref: "Image",
-			required: true
-		}],
-		required: true,
-		validate: [arrayLimit, 'No more than 20 images are allowed']
-	},
 	location: {
 		country: {
 			type: String,
@@ -106,7 +97,6 @@ export interface IHousingOffer {
 		currency: string
 		amount: number
 	}
-	images: [string]
 	location: {
 		country: string
 		city: string
