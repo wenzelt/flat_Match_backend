@@ -19,25 +19,16 @@ function jsonFilterToMongoFilter(filterOfUser: any) {
 	if (filterString.includes("ageRange")) {
 		query["ageRange.minAge"] = { $gte: JSONfilter.ageRange.minAge }
 	}
-	if (filterString.includes("roomMatesNumber")) {
-		query.$expr = {
-			$and: [
-				{ "$gte": [{ "$strLenCP": "flatmates" }, JSONfilter.roomMatesNumber.minNumber] },
-				{ "$lte": [{ "$strLenCP": "flatmates" }, JSONfilter.roomMatesNumber.maxNumber] }]
-		}
-	}
 	if (filterString.includes("furnished")) {
 		query.furnished = JSONfilter.furnished
 	}
 	if (filterString.includes("minYearConstructed")) {
-		query.yearConstructed = { $gt: new Date(JSONfilter.minYearConstructed.getFullYear()) }
+		query.yearConstructed = { $gt: new Date(JSONfilter.minYearConstructed).toISOString() }
 	}
 	return query
 }
 
 const getFilteredOffer = async (req: any, res: any) => {
-
-
 	try {
 		const filter = { applicant: req.userId }
 		const filterOfUser = await Filter.findOne(filter)
