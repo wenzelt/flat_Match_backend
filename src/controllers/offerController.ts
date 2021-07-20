@@ -103,7 +103,6 @@ async function getFilterGeo(filter) {
 		})
 		return { "lat": response.data.data[0].latitude, "long": response.data.data[0].longitude }
 	} catch (error) {
-		// console.error(error);
 		return error
 	}
 }
@@ -154,12 +153,10 @@ const getFilteredOffer = async (req: any, res: any) => {
 		// if filter has location do this
 		if (filterOfUser.toJSON().hasOwnProperty("location")) {
 			const originalFilter = filterOfUser.toJSON()
-			const queryFilter = originalFilter.location.country + "," + originalFilter.location.city + "," + originalFilter.location.address
 			const filterGEO = await getFilterGeo(originalFilter)
 			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
-			// housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
+			housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
 		}
-		// housingOffersAfterFilter = filterDistance(housingOffersAfterFilter, mongoFilterFromJSON)
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
 	} catch (err) {
