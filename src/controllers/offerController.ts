@@ -26,6 +26,43 @@ function filterAmountOfFlatmates(offers: any, filter: any) {
 	return returnArray
 
 }
+
+function toRad(Value) {
+	return Value * Math.PI / 180
+}
+
+function calcDistance(geoData) {
+	const R = 6371 // km
+	const dLat = toRad(geoData.lat2 - geoData.lat1)
+	const dLon = toRad(geoData.long2 - geoData.long1)
+	const lat1 = toRad(geoData.lat1)
+	const lat2 = toRad(geoData.lat2)
+
+	const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+	const distance = R * c
+	return distance
+}
+
+function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
+	const returnArray: any = []
+	let distanceResult: number = 10
+	for (const offer of offerGeo) {
+		distanceResult = calcDistance({
+			"lat1": offer.location.latitude,
+			"lat2": filterGeo.lat,
+			"long1": offer.location.longitude,
+			"long2": filterGeo.long
+		})
+		if (distanceResult < maxDistance) {
+			offer.distanceToFilterLocation = distanceResult
+			returnArray.push(offer)
+		}
+
+	}
+	return returnArray
+}
 //
 // function calcDistance() {
 //
