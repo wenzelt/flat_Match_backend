@@ -163,8 +163,7 @@ const getFilteredOffer = async (req: any, res: any) => {
 		if (userAge) {
 			const returnArray = []
 			for (const offer of housingOffersAfterFilter) {
-				// @ts-ignore
-				if (userAge <= offer.ageRange.maxNumber && userAge > offer.ageRange.minNumber) {
+				if (userAge <= offer.ageRange.maxAge && userAge > offer.ageRange.minAge) {
 					returnArray.push(offer)
 				}
 			}
