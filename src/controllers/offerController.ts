@@ -92,8 +92,15 @@ function jsonFilterToMongoFilter(filterOfUser: any) {
 
 async function getFilterGeo(filter) {
 	try {
-		const queryFilter = `${filter.location.country},${filter.location.city},${filter.location.address}`
-		const response = await axios.get(`http://api.positionstack.com/v1/forward?access_key=f5d1f0164715adf90867d700bc6c8555&query=${queryFilter}&limit=10`)
+		const asd = filter
+		const queryFilter = `${asd.location.country},${asd.location.city},${asd.location.address}`.toString()
+		const url = `http://api.positionstack.com/v1/forward`
+		const response = await axios({
+			method: 'get',
+			url,
+			headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+			params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
+		})
 		return { "lat": response.data.data[0].latitude, "long": response.data.data[0].longitude }
 	} catch (error) {
 		// console.error(error);
