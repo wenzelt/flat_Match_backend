@@ -23,7 +23,6 @@ const signup = async (req: any, res: any) => {
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				gender: req.body.gender,
-				image: req.body.image,
 				bio: req.body.bio,
 				date_of_birth: req.body.date_of_birth,
 				occupation: req.body.occupation,
@@ -64,7 +63,6 @@ const signup = async (req: any, res: any) => {
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				gender: req.body.gender,
-				image: req.body.image,
 				bio: req.body.bio,
 				date_of_birth: req.body.date_of_birth,
 				occupation: req.body.occupation,
@@ -187,24 +185,31 @@ const getUser = async (req: any, res: any) => {
 
 const updateUser = async (req: any, res: any) => {
 	try {
+		const user: any = await User.findById(req.userId)
 		const filter = { _id: req.userId }
 		const update = {
+			smoker: req.body.smoker,
 			first_name: req.body.first_name,
 			last_name: req.body.last_name,
 			gender: req.body.gender,
-			image: req.body.image,
 			bio: req.body.bio,
 			date_of_birth: req.body.date_of_birth,
 			occupation: req.body.occupation,
 			place_of_residency: req.body.place_of_residency,
 			interests: req.body.interests,
-			smoker: req.body.smoker,
 		}
-
-		const updatedUser = await User.findOneAndUpdate(filter, update, {
-			runValidators: true,
-			new: true
-		})
+		let updatedUser
+		if (user.userType === "Tenant") {
+			updatedUser = await Tenant.findOneAndUpdate(filter, update, {
+				runValidators: true,
+				new: true
+			})
+		} else {
+			updatedUser = await Applicant.findOneAndUpdate(filter, update, {
+				runValidators: true,
+				new: true
+			})
+		}
 
 		if (!updatedUser)
 			return res.status(404).json({

@@ -13,3 +13,8 @@ offerRoute.get('/:id', middlewares.checkAuthentication, middlewares.checkIsTenan
 offerRoute.get('/getFilteredOffers/:id', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.getFilteredOffer)
 offerRoute.put('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.updateOffer)
 offerRoute.delete('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.removeOffer)
+// offer pictures
+offerRoute.post('/uploadOfferPicture/:id', middlewares.checkAuthentication, offerController.uploadOfferPicture)
+offerRoute.get('/getOfferPicture/:fileName', middlewares.checkAuthentication, offerController.getOfferPicture)
+offerRoute.get('/getOfferPicturesMetaData/:id', middlewares.checkAuthentication, offerController.getOfferPicturesMetaData)
+offerRoute.delete('/deleteOfferPicture/:fileName', middlewares.checkAuthentication, offerController.deleteOfferPicture)
