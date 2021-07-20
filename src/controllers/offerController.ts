@@ -112,12 +112,15 @@ async function getOfferGeo(housingOffersAfterFilter: any) {
 	const returnArray = []
 	for (const offer of housingOffersAfterFilter) {
 		try {
-			offer.location = {}
-			offer.location.country = "Munich"
-			offer.location.city = "Munich"
-			offer.location.address = "Situlistr 67"
-			const queryFilter = `${offer.location.country},${offer.location.city},${offer.location.address}`
-			const response = await axios.get(`http://api.positionstack.com/v1/forward?access_key=f5d1f0164715adf90867d700bc6c8555&query=${queryFilter}&limit=10`)
+			const queryFilter = `Germany,${offer.location.city},${offer.location.address}`
+			const url = `http://api.positionstack.com/v1/forward`
+			const response = await axios({
+				method: 'get',
+				url,
+				headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+				params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
+			})
+
 			offer.location.latitude = response.data.data[0].latitude
 			offer.location.longitude = response.data.data[0].longitude
 			returnArray.push(offer)
