@@ -7,7 +7,7 @@ import { dbUrl } from "../server"
 import { Logger } from "tslog"
 import { HousingOffer } from "../models/housingOffer"
 import { User } from "../models/user"
-import { Filter } from "../models/filter"
+import { Filter, FilterDoc } from "../models/filter"
 import axios from "axios"
 
 
@@ -27,25 +27,24 @@ function filterAmountOfFlatmates(offers: any, filter: any) {
 
 }
 
-function toRad(Value) {
+function toRadians(Value) {
 	return Value * Math.PI / 180
 }
 
 function calcDistance(geoData) {
 	const R = 6371 // km
-	const dLat = toRad(geoData.lat2 - geoData.lat1)
-	const dLon = toRad(geoData.long2 - geoData.long1)
-	const lat1 = toRad(geoData.lat1)
-	const lat2 = toRad(geoData.lat2)
+	const deltaLatitude = toRadians(geoData.lat2 - geoData.lat1)
+	const deltaLongitude = toRadians(geoData.long2 - geoData.long1)
+	const lat1 = toRadians(geoData.lat1)
+	const lat2 = toRadians(geoData.lat2)
 
-	const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-		Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+	const a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) +
+		Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2) * Math.cos(lat1) * Math.cos(lat2)
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-	const distance = R * c
-	return distance
+	return R * c
 }
 
-function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
+function filterDistance(filterGeo: any, offerGeo: any, maxDistance: number) {
 	const returnArray: any = []
 	let distanceResult: number = 10
 	for (const offer of offerGeo) {
@@ -64,7 +63,7 @@ function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
 	return returnArray
 }
 
-function jsonFilterToMongoFilter(filterOfUser: any) {
+function jsonFilterToMongoFilter(filterOfUser: FilterDoc) {
 	const JSONfilter = filterOfUser.toJSON()
 	const filterString = JSON.stringify(JSONfilter)
 
@@ -139,6 +138,7 @@ const getFilteredOffer = async (req: any, res: any) => {
 				error: "Not Found",
 				message: `No Filter set for this user, please set one to narrow down the offerings.`,
 			})
+		const originalFilter = filterOfUser.toJSON()
 
 		const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
 		let housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON).lean()
@@ -148,15 +148,15 @@ const getFilteredOffer = async (req: any, res: any) => {
 				error: "Not Found",
 				message: `Housing Offer not found`,
 			})
-		housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, filterOfUser.toJSON())
+		housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, originalFilter)
 
 		// if filter has location do this
 		if (filterOfUser.toJSON().hasOwnProperty("location")) {
-			const originalFilter = filterOfUser.toJSON()
 			const filterGEO = await getFilterGeo(originalFilter)
 			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
 			housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
 		}
+
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
 	} catch (err) {
