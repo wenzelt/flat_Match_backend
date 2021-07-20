@@ -63,23 +63,6 @@ function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
 	}
 	return returnArray
 }
-//
-// function calcDistance() {
-//
-// }
-
-// function filterDistance(filterGeo: any, offerGeo: any, maxDistance: any) {
-//     const returnArray: any = []
-//     let distanceResult : number = 10
-//     for (const offer of offerGeo) {
-//         calcDistance({"lat1": offer.location.latitude, "lat2" : filterGeo.lat, "long1":offer.location.longitude, "long2": filterGeo.long})
-//         if (distanceResult < maxDistance) {
-//             returnArray.push(offer)
-//         }
-//
-//     }
-//     return returnArray
-// }
 
 function jsonFilterToMongoFilter(filterOfUser: any) {
 	const JSONfilter = filterOfUser.toJSON()
