@@ -91,8 +91,7 @@ function jsonFilterToMongoFilter(filterOfUser: FilterDoc) {
 
 async function getFilterGeo(filter) {
 	try {
-		const asd = filter
-		const queryFilter = `${asd.location.country},${asd.location.city},${asd.location.address}`.toString()
+		const queryFilter = `${filter.location.country},${filter.location.city},${filter.location.address}`.toString()
 		const url = `http://api.positionstack.com/v1/forward`
 		const response = await axios({
 			method: 'get',
