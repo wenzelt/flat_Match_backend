@@ -1,13 +1,13 @@
-import { Request as eRequest } from "express"
-import { GridFsStorage } from "multer-gridfs-storage"
+import {Request as eRequest} from "express"
+import {GridFsStorage} from "multer-gridfs-storage"
 import mongoose from "mongoose"
 import multer from "multer"
-import { getFileByName, multerUploadPromise } from "../shared/gridFSHelperFuctions"
-import { dbUrl } from "../server"
-import { Logger } from "tslog"
-import { HousingOffer } from "../models/housingOffer"
-import { User } from "../models/user"
-import { Filter, FilterDoc } from "../models/filter"
+import {getFileByName, multerUploadPromise} from "../shared/gridFSHelperFuctions"
+import {dbUrl} from "../server"
+import {Logger} from "tslog"
+import {HousingOffer} from "../models/housingOffer"
+import {User} from "../models/user"
+import {Filter, FilterDoc} from "../models/filter"
 import axios from "axios"
 
 
@@ -150,7 +150,7 @@ const getFilteredOffer = async (req: any, res: any) => {
 		const originalFilter = filterOfUser.toJSON()
 
 		const mongoFilterFromJSON = jsonFilterToMongoFilter(filterOfUser)
-		let housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON).lean()
+		let housingOffersAfterFilter = await HousingOffer.find(mongoFilterFromJSON).lean().limit(40)
 		// if no offer with id is found, return 404
 		if (!housingOffersAfterFilter)
 			return res.status(404).json({
