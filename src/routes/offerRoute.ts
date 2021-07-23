@@ -8,6 +8,7 @@ import offerController = require("../controllers/offerController")
 export const offerRoute = express.Router()
 
 offerRoute.post('/', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.createOffer)
+offerRoute.get('/getOffers/:userId', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffers)
 offerRoute.get('/getOffers', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffers)
 offerRoute.get('/getFilteredOffers/', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.getFilteredOffer)
 offerRoute.get('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffer)
