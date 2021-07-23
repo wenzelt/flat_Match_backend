@@ -200,8 +200,7 @@ const createOffer = async (req: any, res: any) => {
 		})
 	// Get flatmates User._id from the Db, to store in housingOffer
 	const flatmates = await User.find({ email: req.body.flatmates }).exec()
-	const flatmatesIds = flatmates.map((flatmate: any) => flatmate._doc._id)
-	req.body.flatmates = flatmatesIds
+    req.body.flatmates = flatmates.map((flatmate: any) => flatmate._doc._id)
 	// handle the request
 	try {
 		// create movie in database
