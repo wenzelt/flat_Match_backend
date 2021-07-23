@@ -407,7 +407,7 @@ const handleFile = async (request: eRequest, offerId: string): Promise<any> => {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		},
-		file: (fileToUpload: any) => {
+		file: () => {
 			return {
 				filename: offerId + '_' + Date.now(),
 				bucketName: 'offerPictures',
