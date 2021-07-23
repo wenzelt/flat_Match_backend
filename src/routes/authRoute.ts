@@ -14,6 +14,7 @@ authRoute.get("/user", middlewares.checkAuthentication, authController.getUser)
 authRoute.get("/:email", middlewares.checkAuthentication, authController.getUserByMail)
 authRoute.get("/logout", middlewares.checkAuthentication, authController.logout)
 authRoute.put("/user", middlewares.checkAuthentication, authController.updateUser)
+authRoute.delete("/user", middlewares.checkAuthentication, authController.deleteAccount)
 
 
 
