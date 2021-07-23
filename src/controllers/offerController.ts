@@ -125,10 +125,11 @@ async function getOfferGeo(housingOffersAfterFilter: any) {
 				headers: { 'Content-Type': 'application/json;charset=UTF-8' },
 				params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
 			})
-
-			offer.location.latitude = response.data.data[0].latitude
-			offer.location.longitude = response.data.data[0].longitude
-			returnArray.push(offer)
+			if (response.status === 200 && response.data.data.length !== 0) {
+				offer.location.latitude = response.data.data[0].latitude
+				offer.location.longitude = response.data.data[0].longitude
+				returnArray.push(offer)
+			}
 		} catch (error) {
 			return error
 		}
