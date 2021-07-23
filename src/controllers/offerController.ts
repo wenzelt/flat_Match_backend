@@ -184,11 +184,16 @@ const getFilteredOffer = async (req: any, res: any) => {
 		}
 		// if filter has location do this
 		if (originalFilter.hasOwnProperty("location")) {
+			const filterGEO = await getFilterGeo(originalFilter)
+			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
+			housingOffersAfterFilter = appendDistance(filterGEO, offersWithGeoAppended)
 			if (originalFilter.location.hasOwnProperty("distance")) {
-				const filterGEO = await getFilterGeo(originalFilter)
-				const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
-				housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
+				housingOffersAfterFilter = filterDistance(housingOffersAfterFilter, originalFilter.location.distance)
 			}
+			housingOffersAfterFilter = housingOffersAfterFilter.sort((a, b) => {
+				// @ts-ignore
+				return a.distanceToFilterLocation - b.distanceToFilterLocation
+			})
 		}
 
 
