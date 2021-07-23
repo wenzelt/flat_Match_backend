@@ -219,11 +219,25 @@ const createOffer = async (req: any, res: any) => {
 		})
 	// Get flatmates User._id from the Db, to store in housingOffer
 	const flatmates = await User.find({ email: req.body.flatmates }).exec()
-    req.body.flatmates = flatmates.map((flatmate: any) => flatmate._doc._id)
+	req.body.flatmates = flatmates.map((flatmate: any) => flatmate._doc._id)
 	// handle the request
 	try {
-		// create movie in database
-		const housingOffer = await HousingOffer.create(req.body)
+		const body = req.body
+		const queryFilter = `${req.body.location.country},${req.body.location.city},${req.body.location.address}`
+		const url = `http://api.positionstack.com/v1/forward`
+		const response = await axios({
+			method: 'get',
+			url,
+			headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+			params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
+		})
+		if (response.status === 200 && response.data.data.length !== 0) {
+			body.location.latitude = response.data.data[0].latitude
+			body.location.longitude = response.data.data[0].longitude
+		}
+
+		// create offer in database
+		const housingOffer = await HousingOffer.create(body)
 
 		// return created movie
 		return res.status(201).json(housingOffer)
