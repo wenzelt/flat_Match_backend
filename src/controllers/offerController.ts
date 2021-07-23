@@ -44,7 +44,7 @@ function calcDistance(geoData) {
 	return R * c
 }
 
-function filterDistance(filterGeo: any, offerGeo: any, maxDistance: number) {
+function appendDistance(filterGeo: any, offerGeo: any) {
 	const returnArray: any = []
 	let distanceResult: number = 10
 	for (const offer of offerGeo) {
@@ -54,11 +54,19 @@ function filterDistance(filterGeo: any, offerGeo: any, maxDistance: number) {
 			"long1": offer.location.longitude,
 			"long2": filterGeo.long
 		})
-		if (distanceResult < maxDistance) {
-			offer.distanceToFilterLocation = distanceResult
+		offer.distanceToFilterLocation = distanceResult
+		returnArray.push(offer)
+	}
+	return returnArray
+}
+
+
+function filterDistance(offers: any, maxDistance: number) {
+	const returnArray: any = []
+	for (const offer of offers) {
+		if (offer.distanceToFilterLocation < maxDistance) {
 			returnArray.push(offer)
 		}
-
 	}
 	return returnArray
 }
