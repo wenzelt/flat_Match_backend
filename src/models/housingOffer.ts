@@ -83,7 +83,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	numberOfRooms: {
 		type: Number,
-		requried: true
+        required: true
 	},
 	values: [{
 		type: String,
