@@ -205,6 +205,24 @@ const getUserByMail = async (req: any, res: any) => {
 	}
 }
 
+const isEmailAvailable = async (req: any, res: any) => {
+	try {
+		const filter = { email: req.params.email }
+		const userFound = await User.findOne(filter)
+
+		if (userFound !== null && userFound !== undefined) {
+			return res.status(200).json(false)
+		}
+
+		return res.status(200).json(true)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: err.message,
+		})
+	}
+}
+
 const updateUser = async (req: any, res: any) => {
 	try {
 		const user: any = await User.findById(req.userId)
@@ -259,5 +277,6 @@ export {
 	getUser,
 	logout,
 	updateUser,
-	getUserByMail
+	getUserByMail,
+	isEmailAvailable
 }
