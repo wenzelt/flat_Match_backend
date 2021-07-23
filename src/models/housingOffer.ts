@@ -45,7 +45,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
-		requried: true
+        required: true
 	},
 	roomSize: {
 		type: Number,
@@ -57,7 +57,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	title: {
 		type: String,
-		requried: true
+        required: true
 	},
 	ageRange: {
 		minAge: {
@@ -83,7 +83,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	numberOfRooms: {
 		type: Number,
-		requried: true
+        required: true
 	},
 	values: [{
 		type: String,
