@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import dotenv from "dotenv"
 import { User } from "../models/user"
 import { Applicant } from "../models/applicant"
-import { Tenant } from "../models/tenant"
+import { Tenant, TenantDoc } from "../models/tenant"
 
 const signup = async (req: any, res: any) => {
 	// check if applicant or tenant
@@ -23,7 +23,6 @@ const signup = async (req: any, res: any) => {
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				gender: req.body.gender,
-				image: req.body.image,
 				bio: req.body.bio,
 				date_of_birth: req.body.date_of_birth,
 				occupation: req.body.occupation,
@@ -64,7 +63,6 @@ const signup = async (req: any, res: any) => {
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				gender: req.body.gender,
-				image: req.body.image,
 				bio: req.body.bio,
 				date_of_birth: req.body.date_of_birth,
 				occupation: req.body.occupation,
@@ -75,13 +73,13 @@ const signup = async (req: any, res: any) => {
 				userType: req.body.userType.discriminatorKey
 			})
 			// create the tenant in the database
-			const retUser = await User.create(tenant)
+			const retUser: any = await User.create(tenant)
 
 			// if tenant is registered without errors
 			// create a token
 			const token = jwt.sign(
 				{
-					_id: retUser._id
+					_id: retUser._id, first_name: retUser.first_name, last_name: retUser.last_name
 				},
 				process.env.JWT_SECRET,
 				{
@@ -165,8 +163,30 @@ const signin = async (req: any, res: any) => {
 
 const getUser = async (req: any, res: any) => {
 	try {
-		// get own user name from database
+		// get own user info from database
 		const user = await User.findById(req.userId)
+			.select('-password')
+			.exec()
+
+		if (!user)
+			return res.status(404).json({
+				error: "Not Found",
+				message: `User not found`,
+			})
+
+		return res.status(200).json(user)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal Server Error",
+			message: err.message,
+		})
+	}
+}
+
+const getUserByMail = async (req: any, res: any) => {
+	try {
+		// for an input array of emails, return an array of users
+		const user = await User.findOne({ email: req.params.email })
 			.select('-password')
 			.exec()
 
@@ -187,24 +207,31 @@ const getUser = async (req: any, res: any) => {
 
 const updateUser = async (req: any, res: any) => {
 	try {
+		const user: any = await User.findById(req.userId)
 		const filter = { _id: req.userId }
 		const update = {
+			smoker: req.body.smoker,
 			first_name: req.body.first_name,
 			last_name: req.body.last_name,
 			gender: req.body.gender,
-			image: req.body.image,
 			bio: req.body.bio,
 			date_of_birth: req.body.date_of_birth,
 			occupation: req.body.occupation,
 			place_of_residency: req.body.place_of_residency,
 			interests: req.body.interests,
-			smoker: req.body.smoker,
 		}
-
-		const updatedUser = await User.findOneAndUpdate(filter, update, {
-			runValidators: true,
-			new: true
-		})
+		let updatedUser
+		if (user.userType === "Tenant") {
+			updatedUser = await Tenant.findOneAndUpdate(filter, update, {
+				runValidators: true,
+				new: true
+			})
+		} else {
+			updatedUser = await Applicant.findOneAndUpdate(filter, update, {
+				runValidators: true,
+				new: true
+			})
+		}
 
 		if (!updatedUser)
 			return res.status(404).json({
@@ -231,5 +258,6 @@ export {
 	signin,
 	getUser,
 	logout,
-	updateUser
+	updateUser,
+	getUserByMail
 }

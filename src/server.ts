@@ -14,6 +14,7 @@ import { authRoute } from "./routes/authRoute"
 import { offerRoute } from "./routes/offerRoute"
 import { allowCrossDomain } from "./middleware/crossDomainMiddleware"
 import { filterRoute } from "./routes/filterRoute"
+import { profileRoute } from "./routes/profileRoute"
 
 // initialize configuration
 dotenv.config()
@@ -27,7 +28,7 @@ const app = express()
 const { DB_USER, DB_PASS } = process.env
 
 // set up the mongoDB connection
-const dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@flatmatch-frankfurt.mhfhi.mongodb.net/FlatMatch?retryWrites=true&w=majority`
+export const dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@flatmatch-frankfurt.mhfhi.mongodb.net/FlatMatch?retryWrites=true&w=majority`
 
 mongoose
 	.connect(dbUrl, {
@@ -56,6 +57,7 @@ app.use('/', indexRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/offers', offerRoute)
 app.use('/api/filter', filterRoute)
+app.use('/api/files', profileRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 const httpServer = createServer(app)

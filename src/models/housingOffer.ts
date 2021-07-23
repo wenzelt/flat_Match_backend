@@ -17,15 +17,6 @@ const housingOfferSchema = new mongoose.Schema({
 		},
 		amount: Number,
 	},
-	images: {
-		type: [{
-			type: Schema.Types.ObjectId,
-			ref: "Image",
-			required: true
-		}],
-		required: true,
-		validate: [arrayLimit, 'No more than 20 images are allowed']
-	},
 	location: {
 		country: {
 			type: String,
@@ -53,7 +44,7 @@ const housingOfferSchema = new mongoose.Schema({
 		required: true
 	},
 	yearConstructed: {
-		type: Number,
+		type: Date,
 		required: false
 	},
 	title: {
@@ -90,7 +81,7 @@ const housingOfferSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	}],
-
+	smoking: Boolean,
 })
 
 // Limit number of pictures to 20
@@ -106,7 +97,6 @@ export interface IHousingOffer {
 		currency: string
 		amount: number
 	}
-	images: [string]
 	location: {
 		country: string
 		city: string
@@ -115,7 +105,7 @@ export interface IHousingOffer {
 	}
 	description: string
 	roomSize: number
-	yearConstructed?: number
+	yearConstructed?: Date
 	title: string
 	ageRange?: {
 		minAge?: number
@@ -125,6 +115,7 @@ export interface IHousingOffer {
 	furnished: boolean
 	numberOfRooms?: number
 	values: [string]
+	smoking: boolean
 }
 
 export interface HousingOfferDoc extends IHousingOffer, mongoose.Document {
