@@ -144,6 +144,17 @@ function calculateAge(birthday) { // birthday is a date
 }
 
 
+function filterUserAge(housingOffersAfterFilter, userAge: number) {
+	const returnArray = []
+	for (const offer of housingOffersAfterFilter) {
+		if (userAge <= offer.ageRange.maxAge && userAge > offer.ageRange.minAge) {
+			returnArray.push(offer)
+		}
+	}
+	housingOffersAfterFilter = returnArray
+	return housingOffersAfterFilter
+}
+
 const getFilteredOffer = async (req: any, res: any) => {
 	try {
 		const filter = { applicant: req.userId }
@@ -169,13 +180,7 @@ const getFilteredOffer = async (req: any, res: any) => {
 		housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, originalFilter)
 
 		if (userAge) {
-			const returnArray = []
-			for (const offer of housingOffersAfterFilter) {
-				if (userAge <= offer.ageRange.maxAge && userAge > offer.ageRange.minAge) {
-					returnArray.push(offer)
-				}
-			}
-			housingOffersAfterFilter = returnArray
+			housingOffersAfterFilter = filterUserAge(housingOffersAfterFilter, userAge)
 		}
 		// if filter has location do this
 		if (originalFilter.hasOwnProperty("location")) {
