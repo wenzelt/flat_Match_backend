@@ -169,10 +169,12 @@ const getFilteredOffer = async (req: any, res: any) => {
 			housingOffersAfterFilter = returnArray
 		}
 		// if filter has location do this
-		if (filterOfUser.toJSON().hasOwnProperty("location")) {
-			const filterGEO = await getFilterGeo(originalFilter)
-			const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
-			housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
+		if (originalFilter.hasOwnProperty("location")) {
+			if (originalFilter.location.hasOwnProperty("distance")) {
+				const filterGEO = await getFilterGeo(originalFilter)
+				const offersWithGeoAppended = await getOfferGeo(housingOffersAfterFilter)
+				housingOffersAfterFilter = filterDistance(filterGEO, offersWithGeoAppended, filterOfUser.toJSON().location.distance)
+			}
 		}
 
 
