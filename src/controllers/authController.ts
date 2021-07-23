@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
-import dotenv from "dotenv"
+import mongoose from "mongoose"
 import { User } from "../models/user"
 import { Applicant } from "../models/applicant"
-import { Tenant, TenantDoc } from "../models/tenant"
+import { Tenant } from "../models/tenant"
+import { Filter } from "../models/filter"
+import { HousingOffer } from "../models/housingOffer"
 
 const signup = async (req: any, res: any) => {
 	// check if applicant or tenant
@@ -270,6 +272,52 @@ const logout = (req: any, res: any) => {
 	res.status(200).send({ token: null })
 }
 
+const deleteAccount = async (req: any, res: any) => {
+	try {
+		// Delete filter
+		await Filter.deleteOne({ applicant: req.userId })
+
+		const housingOffers = await HousingOffer.find({ tenant: req.userId })
+		if (housingOffers.length !== 0) {
+			const gfsOffer = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+				bucketName: 'offerPictures'
+			})
+			// Delete offerPictures
+			housingOffers.map(async (housingOffer) => {
+				const offerFiles = await gfsOffer.find({ filename: { $regex: housingOffer._id + '.*' } }).toArray()
+				offerFiles.map(async (fileToDelete) => {
+					const file = await gfsOffer.find({ filename: fileToDelete.filename }).toArray()
+					if (file.length > 0) {
+						await gfsOffer.delete(file[0]._id)
+					}
+				})
+			})
+			// Delete offers
+			await HousingOffer.deleteMany({ tenant: req.userId })
+		}
+
+		// Delete profilePictures
+		const gfsProfile = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+			bucketName: 'profilePictures'
+		})
+		const profileFiles = await gfsProfile.find({ filename: { $regex: req.userId + '.*' } }).toArray()
+		profileFiles.map(async (fileToDelete) => {
+			const file = await gfsProfile.find({ filename: fileToDelete.filename }).toArray()
+			if (file.length > 0) {
+				await gfsProfile.delete(file[0]._id)
+			}
+		})
+		// Delete user
+		await User.findByIdAndDelete(req.userId)
+		return res.status(200).json(true)
+	} catch (error) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: error.message,
+		})
+	}
+}
+
 
 export {
 	signup,
@@ -278,5 +326,6 @@ export {
 	logout,
 	updateUser,
 	getUserByMail,
-	isEmailAvailable
+	isEmailAvailable,
+	deleteAccount
 }
