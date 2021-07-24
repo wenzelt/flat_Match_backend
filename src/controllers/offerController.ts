@@ -116,23 +116,24 @@ async function getFilterGeo(filter) {
 async function getOfferGeo(housingOffersAfterFilter: any) {
 	const returnArray = []
 	for (const offer of housingOffersAfterFilter) {
-		try {
-			const queryFilter = `Germany,${offer.location.city},${offer.location.address}`
-			const url = `http://api.positionstack.com/v1/forward`
-			const response = await axios({
-				method: 'get',
-				url,
-				headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-				params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
-			})
-			if (response.status === 200 && response.data.data.length !== 0) {
-				offer.location.latitude = response.data.data[0].latitude
-				offer.location.longitude = response.data.data[0].longitude
-				returnArray.push(offer)
+		if (!offer.location.hasOwnProperty('latitude') && !offer.location.hasOwnProperty('longitude'))
+			try {
+				const queryFilter = `Germany,${offer.location.city},${offer.location.address}`
+				const url = `http://api.positionstack.com/v1/forward`
+				const response = await axios({
+					method: 'get',
+					url,
+					headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+					params: { access_key: "f5d1f0164715adf90867d700bc6c8555", query: queryFilter, limit: 10 }
+				})
+				if (response.status === 200 && response.data.data.length !== 0) {
+					offer.location.latitude = response.data.data[0].latitude
+					offer.location.longitude = response.data.data[0].longitude
+					returnArray.push(offer)
+				}
+			} catch (error) {
+				return error
 			}
-		} catch (error) {
-			return error
-		}
 	}
 	return returnArray
 }
