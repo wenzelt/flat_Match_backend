@@ -9,8 +9,9 @@ export const offerRoute = express.Router()
 
 offerRoute.post('/', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.createOffer)
 offerRoute.get('/getOffers/:userId', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffers)
+offerRoute.get('/getOffers', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffers)
+offerRoute.get('/getFilteredOffers/', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.getFilteredOffer)
 offerRoute.get('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffer)
-offerRoute.get('/getFilteredOffers/:id', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.getFilteredOffer)
 offerRoute.put('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.updateOffer)
 offerRoute.delete('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.removeOffer)
 // offer pictures

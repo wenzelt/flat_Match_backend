@@ -33,11 +33,19 @@ const housingOfferSchema = new mongoose.Schema({
 		address: {
 			type: String,
 			required: true
+		},
+		latitude: {
+			type: Number,
+			required: false
+		},
+		longitude: {
+			type: Number,
+			required: false
 		}
 	},
 	description: {
 		type: String,
-		requried: true
+		required: true
 	},
 	roomSize: {
 		type: Number,
@@ -49,7 +57,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	title: {
 		type: String,
-		requried: true
+		required: true
 	},
 	ageRange: {
 		minAge: {
@@ -75,7 +83,7 @@ const housingOfferSchema = new mongoose.Schema({
 	},
 	numberOfRooms: {
 		type: Number,
-		requried: true
+		required: true
 	},
 	values: [{
 		type: String,
@@ -102,6 +110,8 @@ export interface IHousingOffer {
 		city: string
 		zipCode: string
 		address?: string
+		latitude?: number
+		longitude?: number
 	}
 	description: string
 	roomSize: number
