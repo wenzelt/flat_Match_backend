@@ -10,6 +10,10 @@ const housingOfferSchema = new mongoose.Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Tenant",
 	}],
+	applicants: [{
+		type: Schema.Types.ObjectId,
+		ref: "Applicant",
+	}],
 	price: {
 		currency: {
 			type: String,
@@ -32,7 +36,7 @@ const housingOfferSchema = new mongoose.Schema({
 		},
 		address: {
 			type: String,
-			required: true
+			required: false
 		},
 		latitude: {
 			type: Number,
@@ -101,6 +105,7 @@ function arrayLimit(val: any) {
 export interface IHousingOffer {
 	tenant: string
 	flatmates: [string]
+	applicants: [string]
 	price: {
 		currency: string
 		amount: number
