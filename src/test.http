@@ -1,0 +1,4 @@
+GET http://localhost:8080/api/offer/id/60ddf39bd81f3c31748df225
+Accept: application/json
+
+###

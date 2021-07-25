@@ -1,0 +1,36 @@
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env
+
+# swagger documentation
+swagger_output.json
+
+# Distribution directories
+dist/*
+
+# Dependency directories
+node_modules/*
+
+# Dependency management
+package-lock.json
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Typescript v1 declaration files
+typings/
+
+# IDE settings
+.vscode
+.idea
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Log file
+/npm-debug.log
