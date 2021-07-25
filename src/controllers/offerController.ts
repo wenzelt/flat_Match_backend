@@ -65,7 +65,7 @@ function filterAmountOfFlatmates(offers: any, filter: any) {
 	if (filter.hasOwnProperty("roomMatesNumber")) {
 		for (const i of offers) {
 			const numberFlatMates = i.flatmates.length
-			if (numberFlatMates >= filter.roomMatesNumber.minNumber && numberFlatMates <= filter.roomMatesNumber.maxNumber) {
+			if ((numberFlatMates >= filter.roomMatesNumber.minNumber && numberFlatMates <= filter.roomMatesNumber.maxNumber) || numberFlatMates === 0) {
 				returnArray.push(i)
 			}
 		}
@@ -95,7 +95,7 @@ function calcDistance(geoData) {
 
 function appendDistance(filterGeo: any, offerGeo: any) {
 	const returnArray: any = []
-	let distanceResult: number = 10
+	let distanceResult: number
 	for (const offer of offerGeo) {
 		distanceResult = calcDistance({
 			"lat1": offer.location.latitude,
@@ -127,7 +127,7 @@ function jsonFilterToMongoFilter(filterOfUser: FilterDoc) {
 	const mongoQuery: any = {}
 
 	// filter User Side
-	if (filterString.includes("priceRange")) {
+	if (filterString.includes("minPrice") && filterString.includes("maxPrice")) {
 		mongoQuery["price.amount"] = { $gte: JSONfilter.priceRange.minPrice, $lt: JSONfilter.priceRange.maxPrice }
 	}
 	if (filterString.includes("ageRange")) {
@@ -139,8 +139,9 @@ function jsonFilterToMongoFilter(filterOfUser: FilterDoc) {
 	if (filterString.includes("furnished")) {
 		mongoQuery.furnished = JSONfilter.furnished
 	}
-	if (filterString.includes("minYearConstructed")) {
-		mongoQuery.yearConstructed = { $gt: new Date(JSONfilter.minYearConstructed).toISOString() }
+
+	if (filterString.includes("minYearConstructed") && !filterString.includes('"minYearConstructed":null')) {
+		mongoQuery.yearConstructed = { $gt: JSONfilter.minYearConstructed.toISOString() }
 	}
 
 	return mongoQuery
@@ -165,9 +166,9 @@ async function getFilterGeo(filter) {
 async function getOfferGeo(housingOffersAfterFilter: any) {
 	const returnArray = []
 	for (const offer of housingOffersAfterFilter) {
-		if (!offer.location.hasOwnProperty('latitude') && !offer.location.hasOwnProperty('longitude'))
+		if (!offer.location.hasOwnProperty('latitude') && !offer.location.hasOwnProperty('longitude')) {
 			try {
-				const queryFilter = `Germany,${offer.location.city},${offer.location.address}`
+				const queryFilter = `${offer.location.country},${offer.location.city},${offer.location.address}`
 				const url = `http://api.positionstack.com/v1/forward`
 				const response = await axios({
 					method: 'get',
@@ -183,6 +184,9 @@ async function getOfferGeo(housingOffersAfterFilter: any) {
 			} catch (error) {
 				return error
 			}
+		} else {
+			returnArray.push(offer)
+		}
 	}
 	return returnArray
 }
@@ -262,8 +266,6 @@ const getFilteredOffer = async (req: any, res: any) => {
 				return a.distanceToFilterLocation - b.distanceToFilterLocation
 			})
 		}
-
-
 		// return gotten offerings
 		return res.status(200).json(housingOffersAfterFilter)
 	} catch (err) {
