@@ -9,6 +9,10 @@ import { Logger } from "tslog"
 const log = new Logger({ name: "Profile Controller" })
 
 const getProfilePictureMetaDataOfUser = async (req: any, res: any) => {
+	return await getProfilePictureMetaDataWithId(req, res, req.params.userId)
+}
+
+const getProfilePictureMetaDataWithId = async (req: any, res: any, userId: string) => {
 	try {
 		const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
 			bucketName: 'profilePictures'

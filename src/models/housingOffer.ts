@@ -32,7 +32,7 @@ const housingOfferSchema = new mongoose.Schema({
 		},
 		address: {
 			type: String,
-			required: true
+			required: false
 		},
 		latitude: {
 			type: Number,
