@@ -164,9 +164,17 @@ const signin = async (req: any, res: any) => {
 }
 
 const getUser = async (req: any, res: any) => {
+	return getUserWithId(req, res, req.userId)
+}
+
+const getUserById = async (req: any, res: any) => {
+	return getUserWithId(req, res, req.params.id)
+}
+
+const getUserWithId = async (req: any, res: any, userId: string) => {
 	try {
 		// get own user info from database
-		const user = await User.findById(req.userId)
+		const user = await User.findById(userId)
 			.select('-password')
 			.exec()
 
@@ -323,6 +331,7 @@ export {
 	signup,
 	signin,
 	getUser,
+	getUserById,
 	logout,
 	updateUser,
 	getUserByMail,

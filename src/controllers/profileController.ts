@@ -8,12 +8,20 @@ import { Logger } from "tslog"
 
 const log = new Logger({ name: "Profile Controller" })
 
+const getProfilePictureMetaData = async (req: any, res: any) => {
+	return await getProfilePictureMetaDataWithId(req, res, req.userId)
+}
+
 const getProfilePictureMetaDataOfUser = async (req: any, res: any) => {
+	return await getProfilePictureMetaDataWithId(req, res, req.params.userId)
+}
+
+const getProfilePictureMetaDataWithId = async (req: any, res: any, userId: string) => {
 	try {
 		const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
 			bucketName: 'profilePictures'
 		})
-		const files = await gfs.find({ filename: { $regex: req.userId + '.*' } }).toArray()
+		const files = await gfs.find({ filename: { $regex: userId + '.*' } }).toArray()
 		return res.status(200).json(files.map(file => ({
 			_id: file._id,
 			fileName: file.filename,
@@ -104,6 +112,7 @@ const handleFile = async (request: eRequest, userId: string): Promise<any> => {
 export {
 	uploadProfilePicture,
 	getProfilePicture,
-	getProfilePictureMetaDataOfUser,
-	deleteProfilePicture
+	getProfilePictureMetaData,
+	deleteProfilePicture,
+	getProfilePictureMetaDataOfUser
 }
