@@ -1,6 +1,6 @@
 import { Request as eRequest } from "express"
 import { GridFsStorage } from "multer-gridfs-storage"
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 import multer from "multer"
 import { getFileByName, multerUploadPromise } from "../shared/gridFSHelperFuctions"
 import { dbUrl } from "../server"
@@ -9,6 +9,55 @@ import { HousingOffer } from "../models/housingOffer"
 import { User } from "../models/user"
 import { Filter, FilterDoc } from "../models/filter"
 import axios from "axios"
+
+
+const addToAcceptedOffer = async (req: any, res: any) => {
+	try {
+		// const objFriends = { accepted_offers: }
+		// find offer and add applicant
+		const user = await User.findOneAndUpdate(
+			{ _id: req.userId },
+			{ $push: { accepted_offers: req.params.id } }
+		).exec()
+		// return updated offer
+		return res.status(200).json(user)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+
+}
+
+
+const addToDeclinedOffer = async (req: any, res: any) => {
+	try {
+		// find offer and add applicant
+		const update = {
+			$push: {
+				declined_offers: req.params.id
+			}
+		}
+		const housingOffer = await User.findByIdAndUpdate(
+			req.userId,
+			update,
+			{
+				new: true,
+				runValidators: true,
+			}
+		).exec()
+
+		// return updated offer
+		return res.status(200).json(housingOffer)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+
+}
 
 
 function filterAmountOfFlatmates(offers: any, filter: any) {
@@ -156,6 +205,20 @@ function filterUserAge(housingOffersAfterFilter, userAge: number) {
 	return housingOffersAfterFilter
 }
 
+function filterAcceptedDeclinedOffers(user: any, housingOffersAfterFilter: any) {
+	const declined = user.declined_offers
+	const accepted = user.accepted_offers
+	const both = accepted.concat(declined)
+	const returnArray = []
+	for (const offer of housingOffersAfterFilter) {
+		const id = offer._id.toString()
+		if (!(id in both)) {
+			returnArray.push(offer)
+		}
+	}
+	return returnArray
+}
+
 const getFilteredOffer = async (req: any, res: any) => {
 	try {
 		const filter = { applicant: req.userId }
@@ -178,6 +241,8 @@ const getFilteredOffer = async (req: any, res: any) => {
 				error: "Not Found",
 				message: `Housing Offer not found`,
 			})
+
+		housingOffersAfterFilter = filterAcceptedDeclinedOffers(user, housingOffersAfterFilter)
 		if (originalFilter.roomMatesNumber) {
 			housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, originalFilter)
 		}
@@ -505,6 +570,8 @@ export {
 	getFilteredOffer,
 	addApplicant,
 	removeApplicant,
+	addToDeclinedOffer,
+	addToAcceptedOffer,
 	// offer pictures
 	getOfferPicturesMetaData,
 	getOfferPicture,
