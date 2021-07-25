@@ -12,6 +12,8 @@ offerRoute.get('/getOffers/:userId', middlewares.checkAuthentication, middleware
 offerRoute.get('/getOffers', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.getOffers)
 offerRoute.get('/getFilteredOffers/', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.getFilteredOffer)
 offerRoute.get('/:id', middlewares.checkAuthentication, offerController.getOffer)
+offerRoute.put('/addApplicant/:id', middlewares.checkAuthentication, middlewares.checkIsApplicant, offerController.addApplicant)
+offerRoute.put('/removeApplicant/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.removeApplicant)
 offerRoute.put('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.updateOffer)
 offerRoute.delete('/:id', middlewares.checkAuthentication, middlewares.checkIsTenant, offerController.removeOffer)
 // offer pictures

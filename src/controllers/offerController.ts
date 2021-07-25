@@ -307,7 +307,7 @@ const updateOffer = async (req: any, res: any) => {
 
 	// handle the request
 	try {
-		// find and update movie with id
+		// find and update offer with id
 		const housingOffer = await HousingOffer.findByIdAndUpdate(
 			req.params.id,
 			req.body,
@@ -317,7 +317,7 @@ const updateOffer = async (req: any, res: any) => {
 			}
 		).exec()
 
-		// return updated movie
+		// return updated offer
 		return res.status(200).json(housingOffer)
 	} catch (err) {
 		return res.status(500).json({
@@ -329,13 +329,72 @@ const updateOffer = async (req: any, res: any) => {
 
 const removeOffer = async (req: any, res: any) => {
 	try {
-		// find and remove movie
+		// find and remove offer
 		await HousingOffer.findByIdAndRemove(req.params.id).exec()
 
-		// return message that movie was deleted
+		// return message that offer was deleted
 		return res
 			.status(200)
 			.json({ message: `Housingoffer with id:${req.params.id} was deleted` })
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+}
+
+// Add the current applicant to the offer
+const addApplicant = async (req: any, res: any) => {
+	try {
+		// find offer and add applicant
+		const update = {
+			$push: {
+				applicants: req.userId
+			}
+		}
+		const housingOffer = await HousingOffer.findByIdAndUpdate(
+			req.params.id,
+			update,
+			{
+				new: true,
+				runValidators: true,
+			}
+		).exec()
+
+		// return updated offer
+		return res.status(200).json(housingOffer)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+}
+
+// Remove the current applicant from the offer
+const removeApplicant = async (req: any, res: any) => {
+	try {
+		const user = await User.findOne({ email: req.body.applicantEmail })
+			.select('-password')
+			.exec()
+		// find offer and remove applicant
+		const update = {
+			$pull: {
+				applicants: user._id
+			}
+		}
+		const housingOffer = await HousingOffer.findByIdAndUpdate(
+			req.params.id,
+			update,
+			{
+				new: true,
+				runValidators: true,
+			}
+		).exec()
+
+		// return updated offer
+		return res.status(200).json(housingOffer)
 	} catch (err) {
 		return res.status(500).json({
 			error: "Internal server error",
@@ -444,6 +503,8 @@ export {
 	updateOffer,
 	removeOffer,
 	getFilteredOffer,
+	addApplicant,
+	removeApplicant,
 	// offer pictures
 	getOfferPicturesMetaData,
 	getOfferPicture,
