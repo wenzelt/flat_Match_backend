@@ -11,6 +11,64 @@ import { Filter, FilterDoc } from "../models/filter"
 import axios from "axios"
 
 
+const addToAcceptedOffer = async (req: any, res: any) => {
+	try {
+		// find offer and add applicant
+		const update = {
+			$push: {
+				accepted_offers: req.params.id
+			}
+		}
+		const housingOffer = await User.findByIdAndUpdate(
+			req.id,
+			update,
+			{
+				new: true,
+				runValidators: true,
+			}
+		).exec()
+
+		// return updated offer
+		return res.status(200).json(housingOffer)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+
+}
+
+
+const addToDeclinedOffer = async (req: any, res: any) => {
+	try {
+		// find offer and add applicant
+		const update = {
+			$push: {
+				declined_offers: req.params.id
+			}
+		}
+		const housingOffer = await User.findByIdAndUpdate(
+			req.id,
+			update,
+			{
+				new: true,
+				runValidators: true,
+			}
+		).exec()
+
+		// return updated offer
+		return res.status(200).json(housingOffer)
+	} catch (err) {
+		return res.status(500).json({
+			error: "Internal server error",
+			message: err.message,
+		})
+	}
+
+}
+
+
 function filterAmountOfFlatmates(offers: any, filter: any) {
 	const returnArray: any[] = []
 	if (filter.hasOwnProperty("roomMatesNumber")) {
@@ -505,6 +563,8 @@ export {
 	getFilteredOffer,
 	addApplicant,
 	removeApplicant,
+	addToDeclinedOffer,
+	addToAcceptedOffer,
 	// offer pictures
 	getOfferPicturesMetaData,
 	getOfferPicture,
