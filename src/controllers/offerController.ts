@@ -20,7 +20,7 @@ const addToAcceptedOffer = async (req: any, res: any) => {
 			}
 		}
 		const housingOffer = await User.findByIdAndUpdate(
-			req.id,
+			req.userId,
 			update,
 			{
 				new: true,
@@ -49,7 +49,7 @@ const addToDeclinedOffer = async (req: any, res: any) => {
 			}
 		}
 		const housingOffer = await User.findByIdAndUpdate(
-			req.id,
+			req.userId,
 			update,
 			{
 				new: true,
