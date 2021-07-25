@@ -15,6 +15,7 @@ import { offerRoute } from "./routes/offerRoute"
 import { allowCrossDomain } from "./middleware/crossDomainMiddleware"
 import { filterRoute } from "./routes/filterRoute"
 import { profileRoute } from "./routes/profileRoute"
+import { matchRoute } from "./routes/matchRoute"
 
 // initialize configuration
 dotenv.config()
@@ -57,6 +58,7 @@ app.use('/', indexRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/offers', offerRoute)
 app.use('/api/filter', filterRoute)
+app.use('/api/match', matchRoute)
 app.use('/api/files', profileRoute)
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
