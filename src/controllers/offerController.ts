@@ -1,6 +1,6 @@
 import { Request as eRequest } from "express"
 import { GridFsStorage } from "multer-gridfs-storage"
-import mongoose from "mongoose"
+import mongoose, { Schema } from "mongoose"
 import multer from "multer"
 import { getFileByName, multerUploadPromise } from "../shared/gridFSHelperFuctions"
 import { dbUrl } from "../server"
@@ -13,23 +13,14 @@ import axios from "axios"
 
 const addToAcceptedOffer = async (req: any, res: any) => {
 	try {
+		// const objFriends = { accepted_offers: }
 		// find offer and add applicant
-		const update = {
-			$push: {
-				accepted_offers: req.params.id
-			}
-		}
-		const housingOffer = await User.findByIdAndUpdate(
-			req.userId,
-			update,
-			{
-				new: true,
-				runValidators: true,
-			}
+		const user = await User.findOneAndUpdate(
+			{ _id: req.userId },
+			{ $push: { accepted_offers: req.params.id } }
 		).exec()
-
 		// return updated offer
-		return res.status(200).json(housingOffer)
+		return res.status(200).json(user)
 	} catch (err) {
 		return res.status(500).json({
 			error: "Internal server error",
@@ -214,6 +205,20 @@ function filterUserAge(housingOffersAfterFilter, userAge: number) {
 	return housingOffersAfterFilter
 }
 
+function filterAcceptedDeclinedOffers(user: any, housingOffersAfterFilter: any) {
+	const declined = user.declined_offers
+	const accepted = user.accepted_offers
+	const both = accepted.concat(declined)
+	const returnArray = []
+	for (const offer of housingOffersAfterFilter) {
+		const id = offer._id.toString()
+		if (!(id in both)) {
+			returnArray.push(offer)
+		}
+	}
+	return returnArray
+}
+
 const getFilteredOffer = async (req: any, res: any) => {
 	try {
 		const filter = { applicant: req.userId }
@@ -236,6 +241,8 @@ const getFilteredOffer = async (req: any, res: any) => {
 				error: "Not Found",
 				message: `Housing Offer not found`,
 			})
+
+		housingOffersAfterFilter = filterAcceptedDeclinedOffers(user, housingOffersAfterFilter)
 		if (originalFilter.roomMatesNumber) {
 			housingOffersAfterFilter = filterAmountOfFlatmates(housingOffersAfterFilter, originalFilter)
 		}
